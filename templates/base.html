@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang = "zh-CN">
+	<head>
+		<meta charset = "utf-8">
+        <title>MyBlog - {% block title_name %}{% endblock %}</title>
+        <!--link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"-->
+        <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <style type = "text/css">
+            a:link, a:visited, a:hover, a:active {
+                text-decoration: none;
+            }
+            nav li a {
+                color: #3b3b40;
+            }           
+            .navbar {
+                min-height: 40px;
+            }
+            .breadcrumb{
+                margin-bottom:0px;
+            }
+            body { padding-top: 40px; }
+        </style>
+	</head>
+	<body style = "background-color: #f7f7f2">
+        <div class = "container">
+            <div class = "row">
+                <div class = "col-md-2"></div>
+                <div class = "col-md-8">
+                    <div class = "jumbotron" id = "top" style = "background-color: #e7ecea; color: #2b2b30; font-family: 'Droid Serif',Georgia,'Times New Roman',STHeiti,serif;">
+                        <center><h1>MyBlog</h1></center>
+                    </div>
+                    <nav class = "navbar navbar-default navbar-fixed-top">
+                        <div class = "col-md-2"></div>
+                        <div class = "col-md-8">
+                        <div class = "breadcrumb">
+                        <li>
+                            <a href = "{% url 'home' %}">
+                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                                首页
+                            </a>
+                        </li>
+                        {% block breadcrumb %}
+                        {% endblock %}
+                        </div>
+                        </div>
+                        <div class = "col-md-2"></div>
+                    </nav>
+                    
+                    {% block content %}
+		            {% endblock %}
+                    
+                </div>
+                <div class = "col-md-2"></div>
+            </div>
+        </div>
+	</body>
+</html>

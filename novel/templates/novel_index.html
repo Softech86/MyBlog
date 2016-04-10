@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title_name %}
+《{{ novel.name }}》
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href = "{% url 'novel_list' %}">小说书架</a></li>
+    <li class = "active">{{ novel.name }}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <a role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapseFill" href = "#detail">
+        <center style = "color: #3b3b40"><h1>{{ novel.name }} <small>{{ novel.author }}</small></h1></center>
+    </a>
+</div>
+
+<div class = "collapse" id = "detail">
+    <div class = "well" style = "color: #626b70;font-size: 10pt">
+        <div class = "row">
+            <div class = "col-md-7">
+                {% autoescape off %}
+                    {{ novel.desc }}
+                {% endautoescape %}
+            </div>
+            <div class = "col-md-5">
+                <span style = "float:right">
+                    <form method = "POST" class = "form-horizontal" action=""> {% csrf_token %}
+                        <button type = "submit" class = "btn btn-primary btn-sm">更新数据库</button>
+                    </form>
+                </span>
+                <p>来源网站：{{ novel.resource }}</p>
+                <a href = "http://book.easou.com/w/sort/{{ novel.yisou_id }}.html" target="_blank" style = "color: #626b70">
+                    <p>传 送 门 ：<img src="http://book.easou.com/w/resources/imgs/headerTop_searchLog.png" alt="宜搜小说 - {{ novel.name }}" style="height: 20%; width: 20%" /></p>
+                </a>
+                <p>更新时间：{{ novel.last_update_timestamp | date:"Y-m-d P" }}</p>
+            </div>
+            <div class = "col-md-0"></div>
+        </div>
+    </div>
+</div>
+
+<table class = "table table-hover">
+    <thead>
+        <tr>
+            <th>章节序号</th>
+            <th>章节名</th>
+            <th>更新时间</th>
+        </tr>
+    </thead>
+    {% for c in chapters %}
+    <tbody>
+        <tr>
+            <td>{{ c.chapter_order }}</td>
+            <td><a href = "{% url 'novel_chapter_display' novel.id c.chapter_id %}">{{c.title}}</a></td>
+            <td>{{ c.last_update_timestamp | date:"Y-m-d P" }}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+</table>
+{% endblock %}

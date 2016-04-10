@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title_name %}
+板块列表
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class = "active">版块列表</li>
+{% endblock %}
+
+{% block content %}
+
+{% for b in blocks %}
+<div class = "panel panel-default">
+    <div class = "panel-heading">
+        <a href = "{% url 'article_list' b.id %}" style = "font-size: 18px; color: #41555d">{{ b.name }}</a>
+        <span class = "pull-right">管理员: {{ b.owner }}</span>
+    </div>
+    <div class = "panel-body">
+        {{ b.desc }}
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

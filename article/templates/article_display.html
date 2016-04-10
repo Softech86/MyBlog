@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title_name %}
+{{article.title}}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href = "{% url 'block_index' %}">版块列表</a></li>
+    <li><a href = "{% url 'article_list' block_obj.id %}">{{ block_obj.name }}</a></li>
+    <li class = "active">{{ article.title }}</li>
+{% endblock %}
+
+{% block content %}
+
+<h1 class = "page-header">
+	<a class = "btn btn-default btn-sm" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapseFill" href = "#collapseFill">
+		<span class = "glyphicon glyphicon-star"></span>
+		{{ article.block_obj }}
+	</a>
+	{{ article.title }}
+	<span style = "float: right">
+		<small>
+			{{ article.author }}
+		</small>
+	</span>
+</h1>
+
+<div class="collapse" id="collapseFill">
+    <div class="well">
+        <font size = "4" color = "#424b50">
+            版块内容主要与 {{ block_obj.desc }} 有关
+        </font>
+    </div>
+</div>
+
+<font size = "5" color = "#424b50">
+    {{ article.text }}
+</font>
+
+{% endblock %}

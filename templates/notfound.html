@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title_name %}
+404 NOT FOUND
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class = "active">404 NOT FOUND</li>
+{% endblock %}
+
+{% block content %}
+
+<br />
+<center><h1>页面找不到了</h1></center>
+<center>
+    <a class = "btn btn-default" href = "{% url 'home' %}">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        返回主页
+    </a>
+</center>    
+
+{% endblock %}

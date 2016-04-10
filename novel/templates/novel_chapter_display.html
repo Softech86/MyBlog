@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title_name %}
+《{{ novel.name }}》{{ chapter.title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href = "{% url 'novel_list' %}">小说书架</a></li>
+    <li><a href = "{% url 'novel_index' novel.id %}">{{ novel.name }}</a></li>
+    <li class = "active">{{ chapter.title }}</li>
+{% endblock %}
+
+{% block content %}
+
+<h1 class = "page-header">
+	<button class = "btn btn-default btn-sm">
+		<span class = "glyphicon glyphicon-bookmark"></span>
+		{{ chapter.chapter_order }}
+	</button>
+	{{ chapter.title }}
+	<span style = "float: right">
+		<small>
+			《{{ novel.name }}》
+		</small>
+	</span>
+</h1>
+
+<font size = "5" color = "#424b50">
+    {% autoescape off %}
+        {{ chapter.content }}
+    {% endautoescape %}
+</font>
+
+<center>
+    {% if pre_chapter %}
+    <a class="btn btn-default btn-md" href="{% url 'novel_chapter_display' novel.id pre_chapter.chapter_id %}" role="button">
+    {% else %}
+    <a class="btn btn-default btn-md" href="#totop" role="button" disabled="disabled">
+    {% endif %}
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        上一章
+    </a>
+    <a class="btn btn-default btn-md" href="#top" role="button" id = "totop">
+        回到
+        <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+        顶部
+    </a>
+    {% if next_chapter %}
+    <a class="btn btn-default btn-md" href="{% url 'novel_chapter_display' novel.id next_chapter.chapter_id %}" role="button">
+    {% else %}
+    <a class="btn btn-default btn-md" href="#totop" role="button" disabled="disabled">
+    {% endif %}
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        下一章
+    </a>
+</center>
+
+{% endblock %}
