@@ -1,6 +1,6 @@
 import requests, re, os, bs4
 from bs4 import BeautifulSoup as BSoup
-
+from novel.models import SourceStage
 import threading, queue
 
 def multyThread(func):
@@ -106,94 +106,6 @@ class IndexPage(WebPage):
         self.index += [(Url.fullUrl(Url, a.get('href')), a.text) for a in aList]
 
 class ContentPage(WebPage):
-    PAGE_RULE = {
-        'sangwu.org': {
-            'tag': 'div',
-            'attr': {'class_': 'centent'},
-            'coding': 'gbk'
-        }, 
-        'biquge.la': {
-            'tag': 'div',
-            'attr': {'id': 'content'},
-            'coding': 'gbk'
-        },
-        'baquge.com': {
-            'tag': 'div',
-            'attr': {'class_': 'novel_content'},
-            'coding': 'gbk'
-        },
-        'baishuku.com': {
-            'tag': 'div',
-            'attr': {'id': 'content'},
-            'coding': 'gbk'
-        },
-        'ybdu.com': {
-            'tag': 'div',
-            'attr': {'id': 'htmlContent'},
-            'coding': 'gbk'
-        },
-        'dajiadu.net': {
-            'tag': 'div',
-            'attr': {'id': 'content1'},
-            'coding': 'gbk'
-        },
-        'biqiwu.com': {
-            'tag': 'div',
-            'attr': {'class_': 'content'},
-            'coding': 'gbk'
-        },
-        '365if.com': {
-            'tag': 'div',
-            'attr': {'id': 'content'},
-            'coding': 'gbk'
-        },
-        'xshuotxt.com': {
-            'tag': 'div',
-            'attr': {'id': 'content'},
-            'coding': 'gbk'
-        },
-        'kiwang.com': {
-            'tag': 'div',
-            'attr': {'id': 'inner'},
-            'coding': 'gbk'
-        },
-        'ttshuba.com': {
-            'tag': 'div',
-            'attr': {'id': 'TXT'},
-            'coding': 'gbk'
-        },
-        'zaidudu.net': {
-            'tag': 'dd',
-            'attr':  {'id': 'contents'},
-            'coding': 'gbk'
-        },
-        'mpzw.com': {
-            'tag': 'div',
-            'attr': {'id': 'clickeye_content'},
-            'coding': 'gbk'
-        },
-        'yssm.org': {
-            'tag': 'div',
-            'attr': {'id': 'content'},
-            'coding': 'utf-8'
-        },
-        'yjxs.net': {
-            'tag': 'dd',
-            'attr': {'id': 'contents'},
-            'coding': 'gbk'
-        },
-        'klxsw.com': {
-            'tag': 'div',
-            'attr': {'id': 'r1c'},
-            'coding': 'gbk'
-        },
-        'aszw.com': {
-            'tag': 'div',
-            'attr': {'id': 'contents'},
-            'coding': 'gbk'
-        }
-    }
-
     DEFAULT_RULE = {
         'tag': 'div',
         'attr': {'id': 'content'},
@@ -201,8 +113,18 @@ class ContentPage(WebPage):
     }
     
     def __init__(self, url, site):
-        RULE = self.PAGE_RULE.get(site, self.DEFAULT_RULE)
-        for tolerance in range(10):
+        try:
+            s = SourceStage.objects.get(name = site)
+            RULE = {
+                'tag': s.tag,
+                'attr': {s.attr_type: s.attr_type_name},
+                'coding': s.coding
+            }
+        except:
+            #shouldn't go to this part.
+            RULE = self.DEFAULT_RULE
+            
+        for tolerance in range(10): #This part is jus
             WebPage.__init__(self, url, encoding = RULE['coding'])
             if len(self.html) > 2000:
                 break
@@ -238,9 +160,12 @@ class Chapter:
 class Novel:
     def __init__(self, id_, resource = ""):
         self.id = id_
-        self.getResourceDetail(resource)
-        self.site, self.index = self.res[0]            
-        self.chapterNum = len(self.index)
+        if self.getResourceDetail(resource):
+            self.available = True
+            self.site, self.index = self.res[0]            
+            self.chapterNum = len(self.index)
+        else:
+            self.available = False
         
         '''for r in self.res:
             self.site, self.index = r#self.res[0]
@@ -255,8 +180,7 @@ class Novel:
     def getResourceDetail(self, resource = ""):
         resources = ResourcePage(self.id).resources
         resourceFilter = list(filter(lambda x: x[1] == resource, resources))
-        if not resourceFilter:
-            resourceFilter = resources
+        assert resourceFilter
         self.desc = ''
         self.res = []
         print(resourceFilter)
@@ -291,6 +215,7 @@ class Novel:
         succeed = False
         for i in range(5):
             try:
+            #if True:
                 chapter = Chapter(self.site, *self.index[chapterOrder], watch)
                 chapter.order = chapterOrder % self.chapterNum + 1
                 succeed = True

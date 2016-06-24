@@ -34,3 +34,17 @@ class Chapter(models.Model):
     class Meta:
         verbose_name = '章节'
         verbose_name_plural = '章节'
+        
+class SourceStage(models.Model):
+    name = models.CharField('站点名称', max_length = 30)
+    tag = models.CharField('正文tag类型', max_length = 30)
+    attr_type = models.CharField('定位属性类型', max_length = 30)
+    attr_type_name = models.CharField('定位属性名称', max_length = 30)
+    coding = models.CharField('编码', max_length = 30)
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = '来源站点'
+        verbose_name_plural = '来源站点'

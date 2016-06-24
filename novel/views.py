@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
-from novel.models import Novel, Chapter
+from novel.models import Novel, Chapter, SourceStage
 from django.db.models import Q
 
 import datetime, queue, threading
 
-from novel_crawer.crawer import multyThread, Novel as CrawerNovel, Chapter as CrawerChapter
+from novel_crawer.crawer import multyThread, Novel as CrawerNovel, Chapter as CrawerChapter, ResourcePage
 
 def novel_list(request):
     if request.method == 'GET':
         novels = Novel.objects.all().order_by("-last_update_timestamp")
+        stages = SourceStage.objects.all()
         for n in novels:
             chapters = Chapter.objects.filter(novel = n).order_by('-chapter_id')
             if chapters:
@@ -25,7 +26,7 @@ def novel_list(request):
         return render(
             request,
             "novel_list.html",  
-            {"novels": novels},
+            {"novels": novels, "stages": stages},
             context_instance = RequestContext(request)
         )
     else:
@@ -49,16 +50,29 @@ def novel_list(request):
     
 def novel_index(request, novel_id):
     novel = Novel.objects.get(id = novel_id)
+    yisou_id = str(novel.yisou_id)
     chapters = Chapter.objects.filter(novel = novel).order_by('-chapter_id')
+    offered_stages = [x[1] for x in ResourcePage(yisou_id).resources]
+    stage_available = novel.resource in offered_stages
+    stages = SourceStage.objects.filter(name__in = offered_stages)
     if request.method == 'GET':
         return render(
             request,
             "novel_index.html",
-            {'novel': novel, 'chapters': chapters},
+            {'novel': novel, 'chapters': chapters, 'stages': stages, 'stage_available': stage_available},
             context_instance = RequestContext(request)
         )
     else:
-        yisou_id = str(novel.yisou_id)
+        print(request.POST)
+        
+        if len(request.POST) == 2:
+            novel.resource = request.POST['site_name']
+            chapters = Chapter.objects.filter(Q(novel = novel))
+            print(len(chapters))
+            for c in chapters:
+                c.delete()
+            #input()
+        
         crawernovel = CrawerNovel(yisou_id, novel.resource)
         novel.desc = crawernovel.desc
         novel.save()
@@ -98,17 +112,17 @@ def novel_index(request, novel_id):
         return render(
             request,
             "novel_index.html",
-            {'novel': novel, 'chapters': chapters},
+            {'novel': novel, 'chapters': chapters, 'stages': stages, 'stage_available': True},
             context_instance = RequestContext(request)
         )
-    
+            
 def novel_chapter_display(request, novel_id, chapter_id):
     novel = Novel.objects.get(id = novel_id)
     chapter = Chapter.objects.filter(Q(chapter_id = chapter_id) & Q(novel = novel))[0]
     next_chapter = (Chapter.objects.filter(Q(chapter_id = str(int(chapter_id) + 1)) & Q(novel = novel)) or [''])[0]
     pre_chapter = (Chapter.objects.filter(Q(chapter_id = str(int(chapter_id) - 1)) & Q(novel = novel)) or [''])[0]
     #next_chapter = pre_chapter = ""
-    print('2', next_chapter, pre_chapter, '3')
+    #print('2', next_chapter, pre_chapter, '3')
     
     return render(
         request,
