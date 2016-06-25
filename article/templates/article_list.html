@@ -5,8 +5,16 @@
 {% endblock %}
 
 {% block breadcrumb %}
+<div class = "breadcrumb">
+    <li>
+        <a href = "{% url 'home' %}">
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+            首页
+        </a>
+    </li>
     <li><a href = "{% url 'block_index' %}">版块列表</a></li>
     <li class = "active">{{ block_obj.name }}</li>
+</div>
 {% endblock %}
 
 {% block content %}

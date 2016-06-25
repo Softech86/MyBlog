@@ -5,9 +5,17 @@
 {% endblock %}
 
 {% block breadcrumb %}
+<div class = "breadcrumb" style="background-color:2b2b30">
+    <li>
+        <a href = "{% url 'home' %}">
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+            首页
+        </a>
+    </li>
     <li><a href = "{% url 'novel_list' %}">小说书架</a></li>
     <li><a href = "{% url 'novel_index' novel.id %}">{{ novel.name }}</a></li>
     <li class = "active">{{ chapter.title }}</li>
+</div>
 {% endblock %}
 
 {% block content %}

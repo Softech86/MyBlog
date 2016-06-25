@@ -7,53 +7,70 @@
         <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script type="text/javascript">
-                            function submit(i) {
-                                document.changeRes.submit("1");
-                                alert(i);
-                            }
-                        </script>
         <style type = "text/css">
             a:link, a:visited, a:hover, a:active {
                 text-decoration: none;
             }
+            a:link, a:visited {
+                color: #5a444a
+            }
+            a:hover, a:active {
+                color: #444480;
+            }
             nav li a {
                 color: #3b3b40;
             }           
+            .btn-primary {
+                background-color: #2f2f36;
+            }
+            .btn-primary:hover, .btn-primary:focus {
+                background-color:#556;
+            }
             .navbar {
                 min-height: 40px;
             }
             .breadcrumb{
                 margin-bottom:0px;
+                background-color: #ececef;
             }
             body { padding-top: 40px; }
         </style>
 	</head>
-	<body style = "background-color: #f7f7f2">
+	<body style = "background-color: #ececef">
+        <br />
         <div class = "container">
             <div class = "row">
                 <div class = "col-md-2"></div>
                 <div class = "col-md-8">
-                    <div class = "jumbotron" id = "top" style = "background-color: #e7ecea; color: #2b2b30; font-family: 'Droid Serif',Georgia,'Times New Roman',STHeiti,serif;">
-                        <center><h1>MyBlog</h1></center>
+                    <div style = "background-color: #ececef; color: #102; font-family: 'Droid Serif',Georgia,'Times New Roman',STHeiti,serif;">
+                        <span style="float:right">
+                    {% block breadcrumb %}
+		            {% endblock %}
+                        </span>
+                        <left><h1 style="font-size:72px;">MyBlog</h1></left>
+                    <h3 style = "font-style: italic; color: #999">A Softech's Blog</h3>
+                    <hr/>
                     </div>
-                    <nav class = "navbar navbar-default navbar-fixed-top">
-                        <div class = "col-md-2"></div>
+                    <nav class = "navbar navbar-inverse navbar-fixed-top">
+                        <div class = "col-md-1"></div>
                         <div class = "col-md-8">
-                        <div class = "breadcrumb">
-                        <li>
-                            <a href = "{% url 'home' %}">
-                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                                首页
-                            </a>
-                        </li>
-                        {% block breadcrumb %}
-                        {% endblock %}
+                        <a class = "navbar-brand" href = "{% url 'home' %}">
+                            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                            &nbsp;&nbsp;
+                        </a>
+                        <a class = "navbar-brand" href = "{% url 'block_index' %}">
+                            &nbsp;版块列表&nbsp;
+                        </a>
+                        <a class = "navbar-brand" href = "{% url 'novel_list' %}">
+                            &nbsp;小说书架&nbsp;
+                        </a>
                         </div>
+                        <div class = "col-md-3">
+                            {% block user_tag %}
+                            {% endblock %}
                         </div>
-                        <div class = "col-md-2"></div>
                     </nav>
-                    
+                          
                     {% block content %}
 		            {% endblock %}
                     
